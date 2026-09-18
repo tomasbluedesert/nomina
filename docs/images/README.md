@@ -1,0 +1,1 @@
+Carpeta para capturas REALES de la aplicación (PNG). Nombrar: <ruta>-<detalle>.png, p. ej. nomina-preparar-dias.png. No colocar imágenes generadas artificialmente.\n
