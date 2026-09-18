@@ -1,0 +1,14 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+@tailwind base; @tailwind components; @tailwind utilities;
+:root { color-scheme: light; }
+body { @apply bg-paper text-ink font-sans antialiased; }
+.num { @apply font-mono tabular-nums; }
+.card { @apply bg-white border border-line rounded-md; }
+.lbl { @apply text-[11px] uppercase tracking-[0.08em] text-ink2/70; }
+.inp { @apply w-full border border-line rounded px-2 py-1.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-cobalt/40; }
+.btn { @apply inline-flex items-center gap-1 bg-cobalt text-white text-sm font-medium px-3 py-1.5 rounded hover:bg-ink transition-colors disabled:opacity-50; }
+.btn-ghost { @apply inline-flex items-center text-sm px-3 py-1.5 rounded border border-line hover:border-ink transition-colors; }
+table.ledger th { @apply lbl text-left font-medium py-1.5 border-b border-line; }
+table.ledger td { @apply py-1.5 border-b border-line/60 text-sm; }
+table.ledger td.r, table.ledger th.r { @apply text-right num; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }

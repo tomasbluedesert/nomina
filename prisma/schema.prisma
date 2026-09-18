@@ -1,0 +1,216 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "rhel-openssl-3.0.x"] // native = tu Windows; rhel = funciones de Netlify/AWS
+}
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum Periodicidad {
+  quincenal
+  mensual
+  personalizado
+}
+enum TipoCalculo {
+  mensual_fijo
+  quincenal_fijo
+  diario_x_dias
+}
+enum Esquema {
+  fiscal
+  mixto
+  asimilables
+}
+enum Estatus {
+  activo
+  baja
+}
+enum EstadoParams {
+  borrador
+  vigente
+  vencido
+}
+enum TipoEscenario {
+  actual
+  propuesto
+  presupuesto
+}
+enum AccionEscenario {
+  mantener
+  incremento
+  alta
+  baja
+}
+
+model Company {
+  id               String   @id @default(uuid())
+  razonSocial      String
+  rfc              String   @unique
+  registroPatronal String?
+  estadoIsn        String   @default("BCS")
+  primaRiesgo      Decimal  @db.Decimal(7, 5)
+  createdAt        DateTime @default(now())
+  costCenters CostCenter[]
+  employees   Employee[]
+  periods     PayrollPeriod[]
+  scenarios   Scenario[]
+  settings    AppSetting[]
+}
+
+model CostCenter {
+  id        String @id @default(uuid())
+  companyId String
+  nombre    String
+  tipo      String  // departamento | propiedad | centro_costos
+  company   Company @relation(fields: [companyId], references: [id])
+  employees Employee[] @relation("EmpCentro")
+  empleadosDepto Employee[] @relation("EmpDepto")
+  @@unique([companyId, nombre])
+}
+
+model Employee {
+  id                 String       @id @default(uuid())
+  companyId          String
+  numeroEmpleado     String
+  nombre             String
+  puesto             String
+  rfc                String
+  curp               String?
+  nss                String?
+  fechaIngreso       DateTime     @db.Date
+  estatus            Estatus      @default(activo)
+  costCenterId       String?      // centro de costos (propiedad / oficina / centro)
+  departmentId       String?      // departamento
+  tipoContratacion   String?
+  sueldoDiarioFiscal Decimal      @db.Decimal(12, 2)
+  netoPactado        Decimal      @db.Decimal(12, 2)
+  periodicidad       Periodicidad
+  tipoCalculo        TipoCalculo
+  zonaFrontera       Boolean      @default(false)
+  esquema            Esquema      @default(mixto)
+  asistenciasId      String?      // id del empleado en el proyecto de asistencias
+  sdiRegistrado      Decimal?     @db.Decimal(12, 2) // SDI registrado ante IMSS; si existe, el motor no lo recalcula
+  descInfonavit      Decimal      @default(0) @db.Decimal(12, 2) // descuentos fijos por periodo
+  descFonacot        Decimal      @default(0) @db.Decimal(12, 2)
+  descPrestamo       Decimal      @default(0) @db.Decimal(12, 2)
+  descPension        Decimal      @default(0) @db.Decimal(12, 2)
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
+  company      Company      @relation(fields: [companyId], references: [id])
+  costCenter   CostCenter?  @relation("EmpCentro", fields: [costCenterId], references: [id])
+  department   CostCenter?  @relation("EmpDepto", fields: [departmentId], references: [id])
+  calculations PayrollCalculation[]
+  scenarioLines ScenarioLine[]
+  pagosExtra    PagoExtra[]
+  @@unique([companyId, numeroEmpleado])
+  @@unique([companyId, rfc])
+}
+
+/// Conjunto completo de parámetros por ejercicio/versión. `data` = FiscalParamSet JSON (tarifas, UMA, IMSS, CyV, ISN, LFT).
+/// Se mantiene como JSON versionado + hash para garantizar inmutabilidad de cálculos históricos.
+model FiscalParamSet {
+  id             String       @id @default(uuid())
+  ejercicio      Int
+  version        Int
+  vigenciaDesde  DateTime     @db.Date
+  vigenciaHasta  DateTime     @db.Date
+  estado         EstadoParams @default(borrador)
+  data           Json
+  hashSha256     String
+  createdBy      String?
+  createdAt      DateTime     @default(now())
+  periods      PayrollPeriod[]
+  calculations PayrollCalculation[]
+  @@unique([ejercicio, version])
+}
+
+model PayrollPeriod {
+  id          String       @id @default(uuid())
+  companyId   String
+  tipo        Periodicidad
+  fechaInicio DateTime     @db.Date
+  fechaFin    DateTime     @db.Date
+  paramSetId  String
+  estado      String       @default("abierto")
+  createdAt   DateTime     @default(now())
+  company      Company        @relation(fields: [companyId], references: [id])
+  paramSet     FiscalParamSet @relation(fields: [paramSetId], references: [id])
+  calculations PayrollCalculation[]
+  @@unique([companyId, fechaInicio, fechaFin])
+}
+
+/// Solo INSERT. input_snapshot + result + hash del param set → auditoría inmutable.
+model PayrollCalculation {
+  id            String   @id @default(uuid())
+  periodId      String
+  employeeId    String
+  paramSetId    String
+  paramSetHash  String
+  calculatedAt  DateTime @default(now())
+  calculatedBy  String?
+  inputSnapshot Json
+  result        Json
+  warnings      Json
+  period   PayrollPeriod  @relation(fields: [periodId], references: [id])
+  employee Employee       @relation(fields: [employeeId], references: [id])
+  paramSet FiscalParamSet @relation(fields: [paramSetId], references: [id])
+  @@index([employeeId, calculatedAt])
+  @@index([periodId])
+}
+
+model Scenario {
+  id                 String        @id @default(uuid())
+  companyId          String
+  nombre             String
+  tipo               TipoEscenario
+  presupuestoObjetivo Decimal?     @db.Decimal(14, 2)
+  createdAt          DateTime      @default(now())
+  company Company        @relation(fields: [companyId], references: [id])
+  lines   ScenarioLine[]
+}
+
+model ScenarioLine {
+  id             String          @id @default(uuid())
+  scenarioId     String
+  employeeId     String?
+  accion         AccionEscenario
+  nombre         String?
+  netoPactado    Decimal         @db.Decimal(12, 2)
+  sueldoDiario   Decimal         @db.Decimal(12, 2)
+  fechaEfectiva  DateTime?       @db.Date
+  scenario Scenario  @relation(fields: [scenarioId], references: [id], onDelete: Cascade)
+  employee Employee? @relation(fields: [employeeId], references: [id])
+}
+
+/// Pagos extraordinarios (bonos, comisiones, gratificaciones) por trabajador y periodo.
+model PagoExtra {
+  id          String   @id @default(uuid())
+  companyId   String
+  employeeId  String
+  fechaInicio DateTime @db.Date
+  fechaFin    DateTime @db.Date
+  concepto    String
+  importe     Decimal  @db.Decimal(12, 2)
+  destino     String   // fiscal (bruto gravable) | asimilables (neto)
+  createdAt   DateTime @default(now())
+  createdBy   String?
+  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  @@index([companyId, fechaInicio, fechaFin])
+}
+
+model Puesto {
+  id        String @id @default(uuid())
+  companyId String
+  nombre    String
+  @@unique([companyId, nombre])
+}
+
+model AppSetting {
+  companyId String
+  key       String
+  value     String
+  company   Company @relation(fields: [companyId], references: [id])
+  @@id([companyId, key])
+}

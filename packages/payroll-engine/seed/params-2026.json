@@ -1,0 +1,78 @@
+{
+  "ejercicio": 2026,
+  "vigencia_desde": "2026-02-01",
+  "vigencia_hasta": "2026-12-31",
+  "version": 1,
+  "uma_diaria": 117.31,
+  "uma_mensual": 3566.22,
+  "salario_minimo_general": 315.04,
+  "salario_minimo_frontera": 440.87,
+  "tope_cotizacion_umas": 25,
+  "subsidio": { "aplica": true, "monto_mensual": 535.65, "monto_quincenal": 264.62, "limite_ingreso_mensual": 11492.66, "dias_base_mensual": 30 },
+  "isr": {
+    "quincenal": [
+      { "li": 0.01, "ls": 416.70, "cf": 0.00, "pct": 0.0192 },
+      { "li": 416.71, "ls": 3537.15, "cf": 7.95, "pct": 0.0640 },
+      { "li": 3537.16, "ls": 6216.15, "cf": 207.75, "pct": 0.1088 },
+      { "li": 6216.16, "ls": 7225.95, "cf": 499.20, "pct": 0.1600 },
+      { "li": 7225.96, "ls": 8651.40, "cf": 660.75, "pct": 0.1792 },
+      { "li": 8651.41, "ls": 17448.75, "cf": 916.20, "pct": 0.2136 },
+      { "li": 17448.76, "ls": 27501.60, "cf": 2795.25, "pct": 0.2352 },
+      { "li": 27501.61, "ls": 52505.25, "cf": 5159.70, "pct": 0.3000 },
+      { "li": 52505.26, "ls": 70006.95, "cf": 12660.75, "pct": 0.3200 },
+      { "li": 70006.96, "ls": 210020.70, "cf": 18261.30, "pct": 0.3400 },
+      { "li": 210020.71, "ls": null, "cf": 65866.05, "pct": 0.3500 }
+    ],
+    "mensual": [
+      { "li": 0.01, "ls": 844.59, "cf": 0.00, "pct": 0.0192 },
+      { "li": 844.60, "ls": 7168.51, "cf": 16.22, "pct": 0.0640 },
+      { "li": 7168.52, "ls": 12598.02, "cf": 420.95, "pct": 0.1088 },
+      { "li": 12598.03, "ls": 14644.64, "cf": 1011.68, "pct": 0.1600 },
+      { "li": 14644.65, "ls": 17533.64, "cf": 1339.14, "pct": 0.1792 },
+      { "li": 17533.65, "ls": 35362.83, "cf": 1856.84, "pct": 0.2136 },
+      { "li": 35362.84, "ls": 55736.68, "cf": 5665.16, "pct": 0.2352 },
+      { "li": 55736.69, "ls": 106410.50, "cf": 10457.09, "pct": 0.3000 },
+      { "li": 106410.51, "ls": 141880.66, "cf": 25659.23, "pct": 0.3200 },
+      { "li": 141880.67, "ls": 425641.99, "cf": 37009.69, "pct": 0.3400 },
+      { "li": 425642.00, "ls": null, "cf": 133488.54, "pct": 0.3500 }
+    ]
+  },
+  "imss": {
+    "enf_mat_cuota_fija_pct_uma": { "patron": 0.2040, "obrero": 0 },
+    "enf_mat_excedente_3uma": { "patron": 0.0110, "obrero": 0.0040 },
+    "prestaciones_dinero": { "patron": 0.0070, "obrero": 0.0025 },
+    "gastos_medicos_pensionados": { "patron": 0.0105, "obrero": 0.00375 },
+    "invalidez_vida": { "patron": 0.0175, "obrero": 0.00625 },
+    "guarderias": { "patron": 0.0100, "obrero": 0 },
+    "retiro_sar": { "patron": 0.0200, "obrero": 0 },
+    "infonavit": { "patron": 0.0500, "obrero": 0 },
+    "cesantia_vejez_obrero": 0.01125,
+    "cesantia_vejez_patron": [
+      { "desde": 0, "hasta": 1.0, "unidad": "SM", "pct": 0.03150 },
+      { "desde": 1.0, "hasta": 1.5, "unidad": "UMA", "pct": 0.03676 },
+      { "desde": 1.5, "hasta": 2.0, "unidad": "UMA", "pct": 0.04851 },
+      { "desde": 2.0, "hasta": 2.5, "unidad": "UMA", "pct": 0.05556 },
+      { "desde": 2.5, "hasta": 3.0, "unidad": "UMA", "pct": 0.06026 },
+      { "desde": 3.0, "hasta": 3.5, "unidad": "UMA", "pct": 0.06361 },
+      { "desde": 3.5, "hasta": 4.0, "unidad": "UMA", "pct": 0.06613 },
+      { "desde": 4.0, "hasta": null, "unidad": "UMA", "pct": 0.07513 }
+    ],
+    "exencion_obrero_salario_minimo": true
+  },
+  "isn": { "estado": "BCS", "pct": 0.03, "incluye_asimilables": false },
+  "asimilables_comision": { "pct": 0.05, "iva_pct": 0.16 },
+  "asimilables_tarifa": "mensual",
+  "lft": {
+    "dias_aguinaldo": 15,
+    "prima_vacacional": 0.25,
+    "prima_vacacional_exenta_umas": 15,
+    "prima_dominical": 0.25,
+    "prima_dominical_exenta_umas": 1,
+    "festivo_extra_pct": 1.0,
+    "festivo_exento_pct": 0.5,
+    "festivo_exento_umas_semana": 5,
+    "vacaciones": [12, 14, 16, 18, 20, 22, 22, 22, 22, 22, 24, 24, 24, 24, 24, 26, 26, 26, 26, 26, 28, 28, 28, 28, 28, 30, 30, 30, 30, 30]
+  },
+  "empresa": { "prima_riesgo_trabajo": 0.015 },
+  "motor": { "tolerancia": 0.01, "max_iteraciones": 200, "dias_mes_fijo": 30, "dias_quincena_fija": 15 }
+}
