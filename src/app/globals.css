@@ -12,3 +12,21 @@ table.ledger th { @apply lbl text-left font-medium py-1.5 border-b border-line; 
 table.ledger td { @apply py-1.5 border-b border-line/60 text-sm; }
 table.ledger td.r, table.ledger th.r { @apply text-right num; }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+
+/* --- Manual (render de Markdown) --- */
+.manual { max-width: 62rem; }
+.manual h1 { font-size: 1.4rem; font-weight: 700; margin: .2rem 0 .8rem; }
+.manual h2 { font-size: 1.15rem; font-weight: 600; margin: 1.4rem 0 .5rem; border-bottom: 1px solid var(--line, #e5e1d8); padding-bottom: .25rem; }
+.manual h3 { font-size: 1rem; font-weight: 600; margin: 1rem 0 .4rem; }
+.manual p, .manual li { font-size: .9rem; line-height: 1.55; }
+.manual ul, .manual ol { padding-left: 1.25rem; margin: .4rem 0 .8rem; list-style: disc; }
+.manual ol { list-style: decimal; }
+.manual table { width: 100%; border-collapse: collapse; font-size: .82rem; margin: .6rem 0 1rem; }
+.manual th, .manual td { border: 1px solid #e5e1d8; padding: .35rem .5rem; text-align: left; vertical-align: top; }
+.manual th { background: #faf8f3; }
+.manual code { background: #f4f1ea; padding: .05rem .3rem; border-radius: .25rem; font-size: .82em; }
+.manual pre { background: #f4f1ea; padding: .7rem .9rem; border-radius: .5rem; overflow-x: auto; font-size: .8rem; margin: .6rem 0 1rem; }
+.manual pre code { background: none; padding: 0; }
+.manual pre.mermaid { background: #fff; border: 1px solid #e5e1d8; display: flex; justify-content: center; }
+.manual a { color: #2451b3; }
+.manual blockquote { border-left: 3px solid #e5e1d8; padding-left: .8rem; color: #6b675e; margin: .6rem 0; }
