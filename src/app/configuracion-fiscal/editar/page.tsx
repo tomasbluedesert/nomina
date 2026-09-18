@@ -1,4 +1,5 @@
 import { db } from '@/lib/db';
+import type { Prisma } from '@prisma/client';
 import { EditorParams } from './ui';
 import type { FiscalParamSet } from '@engine';
 export const dynamic = 'force-dynamic';

@@ -1,6 +1,7 @@
 'use server';
 import { revalidatePath } from 'next/cache';
 import { db } from './db';
+import type { Prisma } from '@prisma/client';
 import { paramsVigentes, hashParams } from './params';
 import { currentUserEmail } from './supabase';
 import { calcularCostoReal, type EmpleadoInput, type Periodo, type ResultadoTrabajador } from '@engine';
@@ -97,7 +98,7 @@ export async function calcularPeriodo(tipo: 'quincenal' | 'mensual', anio: numbe
       descuentos: { infonavit: Number(e.descInfonavit), fonacot: Number(e.descFonacot), prestamo: Number(e.descPrestamo), pension: Number(e.descPension) }, extras: extrasInput, overrides: overridesPorEmpleado?.[e.id] };
     try {
       const res = calcularCostoReal(input, periodo, params);
-      await db.payrollCalculation.create({ data: { periodId: per.id, employeeId: e.id, paramSetId: row.id, paramSetHash: hash, calculatedBy: user, inputSnapshot: { ...input, dias_fuente: diasPorEmpleado?.[e.id]?.fuente, ajuste_layout: !!overridesPorEmpleado?.[e.id] } as object, result: res as unknown as object, warnings: res.warnings as unknown as object } });
+      await db.payrollCalculation.create({ data: { periodId: per.id, employeeId: e.id, paramSetId: row.id, paramSetHash: hash, calculatedBy: user, inputSnapshot: { ...input, dias_fuente: diasPorEmpleado?.[e.id]?.fuente, ajuste_layout: !!overridesPorEmpleado?.[e.id] } as Prisma.InputJsonValue, result: res as unknown as Prisma.InputJsonValue, warnings: res.warnings as unknown as Prisma.InputJsonValue } });
       out.push({ empleado: e.numeroEmpleado, nombre: e.nombre, resultado: res });
     } catch (err) { out.push({ empleado: e.numeroEmpleado, nombre: e.nombre, error: (err as Error).message }); }
   }
@@ -116,7 +117,7 @@ export async function leerCodigos() { const cid = await companyId(); const { cod
 export async function agregarComisionAsimilables(pct: number, iva_pct: number) {
   const vig = await db.fiscalParamSet.findFirst({ where: { estado: 'vigente' }, orderBy: [{ ejercicio: 'desc' }, { version: 'desc' }] });
   if (!vig) throw new Error('No hay parámetros vigentes');
-  const data = { ...(vig.data as object), asimilables_comision: { pct, iva_pct }, version: vig.version + 1 } as Record<string, unknown>;
+  const data = { ...(vig.data as Record<string, unknown>), asimilables_comision: { pct, iva_pct }, version: vig.version + 1 } as Prisma.InputJsonValue;
   const user = await currentUserEmail();
   await db.$transaction([
     db.fiscalParamSet.update({ where: { id: vig.id }, data: { estado: 'vencido' } }),

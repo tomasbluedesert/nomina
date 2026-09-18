@@ -1,4 +1,5 @@
 import { db } from './db';
+import type { Prisma } from '@prisma/client';
 import type { FiscalParamSet } from '@engine';
 import { createHash } from 'node:crypto';
 export const hashParams = (p: unknown) => createHash('sha256').update(JSON.stringify(p)).digest('hex');

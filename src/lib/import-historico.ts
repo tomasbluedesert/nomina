@@ -1,6 +1,7 @@
 'use server';
 import * as XLSX from 'xlsx';
 import { db } from './db';
+import type { Prisma } from '@prisma/client';
 import { companyId } from './actions';
 import { hashParams, paramsVigentes } from './params';
 import { currentUserEmail } from './supabase';
@@ -60,7 +61,7 @@ export async function importarNominaHistorica(fd: FormData): Promise<{ lineas: L
       warnings: [{ codigo: 'IMPORTADO', mensaje: 'Nómina histórica importada de archivo; cargas patronales no incluidas' }],
     };
     try {
-      await db.payrollCalculation.create({ data: { periodId: per.id, employeeId: emp.id, paramSetId: per.paramSetId, paramSetHash: 'importado:' + hashParams({ archivo: file.name, rfc }), calculatedBy: user ?? 'importación', inputSnapshot: { importado: true, archivo: file.name, filas: rs.length } as object, result: result as unknown as object, warnings: result.warnings as unknown as object } });
+      await db.payrollCalculation.create({ data: { periodId: per.id, employeeId: emp.id, paramSetId: per.paramSetId, paramSetHash: 'importado:' + hashParams({ archivo: file.name, rfc }), calculatedBy: user ?? 'importación', inputSnapshot: { importado: true, archivo: file.name, filas: rs.length } as Prisma.InputJsonValue, result: result as unknown as Prisma.InputJsonValue, warnings: result.warnings as unknown as Prisma.InputJsonValue } });
       lineas.push({ fila, rfc, nombre, accion: 'importado', detalle: `${brutoFiscal ? 'fiscal ' + brutoFiscal.toFixed(2) : ''}${brutoAsim ? ' + asim ' + brutoAsim.toFixed(2) : ''} → neto ${neto.toFixed(2)}` });
     } catch (e) { lineas.push({ fila, rfc, nombre, accion: 'error', detalle: (e as Error).message.split('\n').pop() }); }
   }
